@@ -90,7 +90,8 @@ export default function Home() {
       </section>
     </div>
   );
-}import React, { useEffect, useState } from "react";
+}
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import NewsCard from "@/components/NewsCard";
