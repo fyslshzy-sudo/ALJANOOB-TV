@@ -90,4 +90,111 @@ export default function Home() {
       </section>
     </div>
   );
+}import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { base44 } from "@/api/base44Client";
+import NewsCard from "@/components/NewsCard";
+import VideoCard from "@/components/VideoCard";
+import { Play, ArrowLeft, Radio } from "lucide-react";
+
+export default function Home() {
+  const [news, setNews] = useState([]);
+  const [videos, setVideos] = useState([]);
+  const [live, setLive] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      base44.entities.News.list("-publish_date", 7).catch(() => []),
+      base44.entities.Video.list("-publish_date", 4).catch(() => []),
+      base44.entities.LiveStream.list("-updated_date", 1).catch(() => []),
+    ]).then(([n, v, l]) => {
+      setNews(n || []);
+      setVideos(v || []);
+      setLive((l && l[0]) || null);
+      setLoading(false);
+    });
+  }, []);
+
+  const featured = news[0];
+  const rest = news.slice(1);
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-12">
+      {/* Hero */}
+      {loading ? (
+        <div className="h-[420px] rounded-xl bg-card animate-pulse" />
+      ) : featured ? (
+        <NewsCard news={featured} featured />
+      ) : (
+        <div className="h-[420px] rounded-xl bg-card border border-border flex items-center justify-center text-muted-foreground">
+          لا توجد أخبار بعد
+        </div>
+      )}
+
+      {/* On Air Now strip */}
+      <section className="rounded-xl bg-card border border-border p-5 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-2 px-3 py-1.5 rounded bg-red-600 text-white text-xs font-extrabold">
+              <Radio className="w-3.5 h-3.5 live-pulse" /> ON AIR NOW
+            </span>
+            <div>
+              <div className="text-primary font-extrabold text-lg">{live?.current_title || "Panorama Al Janoob"}</div>
+              <div className="text-muted-foreground text-sm">{live?.description || "حلقة الليلة: الربع الخالي — رحلة مذهلة عبر صحارٍ شاسعة."}</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground font-mono">20:00 – 20:45</span>
+            <Link to="/live" className="flex items-center gap-2 px-4 py-2 rounded-md border border-primary text-primary text-sm font-bold hover:bg-primary hover:text-background transition-colors">
+              <Play className="w-4 h-4 fill-primary" /> مشاهدة
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Latest news */}
+      <section>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-extrabold text-white gold-underline inline-block">آخر الأخبار</h2>
+          <Link to="/news" className="text-sm text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all">
+            عرض الكل <ArrowLeft className="w-4 h-4" />
+          </Link>
+        </div>
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[...Array(6)].map((_, i) => <div key={i} className="h-72 rounded-xl bg-card animate-pulse" />)}
+          </div>
+        ) : rest.length ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {rest.map((n) => <NewsCard key={n.id} news={n} />)}
+          </div>
+        ) : (
+          <p className="text-muted-foreground text-sm">لا توجد أخبار بعد. أضف الأخبار من لوحة التحكم.</p>
+        )}
+      </section>
+
+      {/* Latest videos */}
+      <section>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-extrabold text-white gold-underline inline-block">أحدث الفيديوهات</h2>
+          <Link to="/videos" className="text-sm text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all">
+            عرض الكل <ArrowLeft className="w-4 h-4" />
+          </Link>
+        </div>
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[...Array(4)].map((_, i) => <div key={i} className="h-64 rounded-xl bg-card animate-pulse" />)}
+          </div>
+        ) : videos.length ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {videos.map((v) => <VideoCard key={v.id} video={v} />)}
+          </div>
+        ) : (
+          <p className="text-muted-foreground text-sm">لا توجد فيديوهات بعد.</p>
+        )}
+      </section>
+    </div>
+  );
 }
+```
