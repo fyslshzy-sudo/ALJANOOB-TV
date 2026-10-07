@@ -62,6 +62,7 @@ export default function Live() {
     </div>
   );
 }
+
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import LivePlayer from "@/components/LivePlayer";
