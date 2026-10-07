@@ -76,3 +76,36 @@ export default function Videos() {
     </div>
   );
 }
+import React, { useEffect, useState } from "react";
+import { base44 } from "@/api/base44Client";
+import VideoCard from "@/components/VideoCard";
+
+export default function Videos() {
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    base44.entities.Video.list("-publish_date", 50)
+      .then((data) => { setVideos(data || []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white gold-underline inline-block"></h1>
+      </div>
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[...Array(8)].map((_, i) => <div key={i} className="h-64 rounded-xl bg-card animate-pulse" />)}
+        </div>
+      ) : videos.length ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {videos.map((v) => <VideoCard key={v.id} video={v} />)}
+        </div>
+      ) : (
+        <p className="text-muted-foreground text-sm py-12 text-center">   .     .</p>
+      )}
+    </div>
+  );
+      }
