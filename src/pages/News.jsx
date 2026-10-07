@@ -70,3 +70,55 @@ export default function News() {
     </div>
   );
 }
+import React, { useEffect, useState } from "react";
+import { base44 } from "@/api/base44Client";
+import NewsCard from "@/components/NewsCard";
+
+export default function News() {
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [category, setCategory] = useState("");
+
+  useEffect(() => {
+    base44.entities.News.list("-publish_date", 50)
+      .then((data) => { setNews(data || []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const categories = ["", ...Array.from(new Set(news.map((n) => n.category).filter(Boolean)))];
+  const filtered = category === "" ? news : news.filter((n) => n.category === category);
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white gold-underline inline-block"></h1>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {categories.map((c) => (
+          <button
+            key={c}
+            onClick={() => setCategory(c)}
+            className={`px-4 py-2 rounded-md text-sm font-bold transition-colors ${
+              category === c ? "bg-primary text-background" : "bg-card border border-border text-muted-foreground hover:text-white"
+            }`}
+          >
+            {c}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {[...Array(6)].map((_, i) => <div key={i} className="h-72 rounded-xl bg-card animate-pulse" />)}
+        </div>
+      ) : filtered.length ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filtered.map((n) => <NewsCard key={n.id} news={n} />)}
+        </div>
+      ) : (
+        <p className="text-muted-foreground text-sm py-12 text-center">      .</p>
+      )}
+    </div>
+  );
+}
