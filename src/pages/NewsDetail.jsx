@@ -72,3 +72,59 @@ export default function NewsDetail() {
     </article>
   );
 }
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { base44 } from "@/api/base44Client";
+import { formatDate } from "@/components/NewsCard";
+import { ArrowRight, Radio } from "lucide-react";
+
+export default function NewsDetail() {
+  const { id } = useParams();
+  const [item, setItem] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    base44.entities.News.get(id)
+      .then((data) => { setItem(data); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return <div className="max-w-3xl mx-auto px-4 py-20"><div className="h-80 rounded-xl bg-card animate-pulse" /></div>;
+  if (!item) return (
+    <div className="max-w-3xl mx-auto px-4 py-20 text-center">
+      <p className="text-muted-foreground mb-4">  .</p>
+      <Link to="/news" className="text-primary font-bold"> </Link>
+    </div>
+  );
+
+  return (
+    <article className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <Link to="/news" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
+        <ArrowRight className="w-4 h-4" />  
+      </Link>
+
+      <div className="flex flex-wrap items-center gap-3">
+        {item.is_breaking && (
+          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-red-600 text-white text-xs font-extrabold">
+            <Radio className="w-3.5 h-3.5 live-pulse" /> 
+          </span>
+        )}
+        {item.category && <span className="px-3 py-1.5 rounded border border-primary text-primary text-xs font-bold">{item.category}</span>}
+        <span className="text-xs text-muted-foreground">{formatDate(item.publish_date || item.created_date)}</span>
+      </div>
+
+      <h1 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">{item.title}</h1>
+      <p className="text-lg text-muted-foreground leading-relaxed">{item.summary}</p>
+
+      {item.image_url && (
+        <img src={item.image_url} alt={item.title} className="w-full rounded-xl object-cover max-h-[460px]" />
+      )}
+
+      {item.content && (
+        <div className="prose prose-invert max-w-none">
+          <p className="text-white/85 leading-loose whitespace-pre-line text-lg">{item.content}</p>
+        </div>
+      )}
+    </article>
+  );
+          }
