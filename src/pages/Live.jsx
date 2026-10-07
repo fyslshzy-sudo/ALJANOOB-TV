@@ -62,3 +62,73 @@ export default function Live() {
     </div>
   );
 }
+import React, { useEffect, useState } from "react";
+import { base44 } from "@/api/base44Client";
+import LivePlayer from "@/components/LivePlayer";
+import { Radio, Satellite } from "lucide-react";
+
+export default function Live() {
+  const [live, setLive] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    base44.entities.LiveStream.list("-updated_date", 1)
+      .then((data) => { setLive((data && data[0]) || null); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  return (
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white gold-underline inline-block"> </h1>
+      </div>
+
+      {/* Player */}
+      {loading ? (
+        <div className="aspect-video rounded-xl bg-card animate-pulse" />
+      ) : (
+        <LivePlayer
+          url={live?.stream_url || ""}
+          title={live?.current_title || "Al Janoob Live"}
+          subtitle={live?.is_live ? "   " : "   "}
+        />
+      )}
+
+      {/* Program info card */}
+      <div className="rounded-xl bg-card border border-border p-5 sm:p-6 space-y-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="px-3 py-1.5 rounded border-2 border-red-600 text-red-500 text-xs font-extrabold tracking-wide">NOW PLAYING</span>
+          {live?.category && <span className="px-3 py-1.5 rounded bg-primary/15 text-primary text-xs font-bold">{live.category}</span>}
+          <span className="text-sm text-muted-foreground font-mono">20:00 - 20:45</span>
+        </div>
+        <div>
+          <h2 className="text-2xl font-extrabold text-white">{live?.current_title || "Panorama Al Janoob"}</h2>
+          {live?.current_title_ar && <p className="text-lg text-primary font-bold mt-1">{live.current_title_ar}</p>}
+        </div>
+        <p className="text-muted-foreground leading-relaxed">
+          {live?.description || " :   —           ."}
+        </p>
+      </div>
+
+      {/* Satellite info */}
+      <div className="rounded-xl bg-[#1a1d26] border border-border p-5">
+        <div className="flex items-center gap-2 mb-4 text-primary">
+          <Satellite className="w-5 h-5" />
+          <span className="font-bold"> </span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            { name: "Arabsat 5A", freq: "11.900 GHz" },
+            { name: "Nilesat 201", freq: "11.938 GHz" },
+            { name: "Hotbird 13E", freq: "11.662 GHz" },
+          ].map((s) => (
+            <div key={s.name} className="rounded-lg bg-background/50 border border-border p-4 text-center">
+              <div className="font-bold text-white text-sm">{s.name}</div>
+              <div className="text-primary font-mono text-sm mt-1">{s.freq}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
