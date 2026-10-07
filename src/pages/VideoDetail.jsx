@@ -79,3 +79,47 @@ export default function VideoDetail() {
     </div>
   );
 }
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { base44 } from "@/api/base44Client";
+import LivePlayer from "@/components/LivePlayer";
+import { formatDate } from "@/components/NewsCard";
+import { ArrowRight } from "lucide-react";
+
+export default function VideoDetail() {
+  const { id } = useParams();
+  const [item, setItem] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    base44.entities.Video.get(id)
+      .then((data) => { setItem(data); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return <div className="max-w-4xl mx-auto px-4 py-20"><div className="aspect-video rounded-xl bg-card animate-pulse" /></div>;
+  if (!item) return (
+    <div className="max-w-4xl mx-auto px-4 py-20 text-center">
+      <p className="text-muted-foreground mb-4">  .</p>
+      <Link to="/videos" className="text-primary font-bold"> </Link>
+    </div>
+  );
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <Link to="/videos" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors">
+        <ArrowRight className="w-4 h-4" />  
+      </Link>
+
+      <LivePlayer url={item.video_url} poster={item.thumbnail_url} title={item.title} subtitle=" " />
+
+      <div className="flex flex-wrap items-center gap-3">
+        {item.category && <span className="px-3 py-1.5 rounded border border-primary text-primary text-xs font-bold">{item.category}</span>}
+        <span className="text-xs text-muted-foreground">{formatDate(item.publish_date || item.created_date)}</span>
+      </div>
+
+      <h1 className="text-2xl sm:text-3xl font-extrabold text-white">{item.title}</h1>
+      {item.description && <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{item.description}</p>}
+    </div>
+  );
+      }
