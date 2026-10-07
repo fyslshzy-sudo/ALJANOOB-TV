@@ -60,3 +60,61 @@ export default function Schedule() {
     </div>
   );
 }
+import React, { useEffect, useState } from "react";
+import { base44 } from "@/api/base44Client";
+import { Clock } from "lucide-react";
+
+const DAYS = ["", "", "", "", "", "", ""];
+
+export default function Schedule() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    base44.entities.Schedule.list("-created_date", 100)
+      .then((data) => { setItems(data || []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  return (
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white gold-underline inline-block"> </h1>
+      </div>
+
+      {loading ? (
+        <div className="space-y-4">{[...Array(3)].map((_, i) => <div key={i} className="h-32 rounded-xl bg-card animate-pulse" />)}</div>
+      ) : items.length ? (
+        <div className="space-y-6">
+          {DAYS.map((day) => {
+            const dayItems = items.filter((s) => s.day === day).sort((a, b) => (a.start_time || "").localeCompare(b.start_time || ""));
+            if (!dayItems.length) return null;
+            return (
+              <div key={day}>
+                <h2 className="text-xl font-extrabold text-primary mb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-6 bg-primary rounded-full" /> {day}
+                </h2>
+                <div className="space-y-2">
+                  {dayItems.map((s) => (
+                    <div key={s.id} className="flex items-center gap-4 rounded-lg bg-card border border-border p-4 hover:border-primary/40 transition-colors">
+                      <div className="flex items-center gap-2 text-primary font-mono text-sm shrink-0 w-32">
+                        <Clock className="w-4 h-4" />
+                        {s.start_time}{s.end_time ? ` - ${s.end_time}` : ""}
+                      </div>
+                      <div>
+                        <div className="font-bold text-white">{s.program_title}</div>
+                        {s.description && <div className="text-sm text-muted-foreground">{s.description}</div>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="text-muted-foreground text-sm py-12 text-center">    .     .</p>
+      )}
+    </div>
+  );
+      }
