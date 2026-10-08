@@ -18,7 +18,8 @@ export default function Admin() {
       </div>
     </div>
   );
-}
+},
+
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
