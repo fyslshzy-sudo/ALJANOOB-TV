@@ -78,7 +78,7 @@ export default function VideoDetail() {
       )}
     </div>
   );
-}
+},
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
