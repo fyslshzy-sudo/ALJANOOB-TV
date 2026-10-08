@@ -69,7 +69,7 @@ export default function News() {
       )}
     </div>
   );
-}'
+}
   
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
