@@ -17,7 +17,7 @@ export default function About() {
       </div>
     </div>
   );
-},
+}
 
 import React from "react";
 import { Tv, Radio, Satellite, Award, Users, Globe } from "lucide-react";
