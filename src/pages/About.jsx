@@ -17,10 +17,10 @@ export default function About() {
       </div>
     </div>
   );
-}
+},
+
 import React from "react";
 import { Tv, Radio, Satellite, Award, Users, Globe } from "lucide-react";
-
 export default function About() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-10">
