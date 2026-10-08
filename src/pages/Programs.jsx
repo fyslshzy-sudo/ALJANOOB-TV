@@ -69,11 +69,11 @@ export default function Programs() {
       )}
     </div>
   );
-}
+},
+  
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import ProgramCard from "@/components/ProgramCard";
-
 export default function Programs() {
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
