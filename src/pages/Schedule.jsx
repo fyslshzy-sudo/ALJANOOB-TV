@@ -59,7 +59,8 @@ export default function Schedule() {
       )}
     </div>
   );
-},
+}
+
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Clock } from "lucide-react";
