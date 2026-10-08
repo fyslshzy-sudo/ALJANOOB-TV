@@ -90,14 +90,13 @@ export default function Home() {
       </section>
     </div>
   );
-}
+},
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import NewsCard from "@/components/NewsCard";
 import VideoCard from "@/components/VideoCard";
 import { Play, ArrowLeft, Radio } from "lucide-react";
-
 export default function Home() {
   const [news, setNews] = useState([]);
   const [videos, setVideos] = useState([]);
