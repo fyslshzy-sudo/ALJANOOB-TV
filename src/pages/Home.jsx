@@ -54,44 +54,7 @@ export default function Home() {
         <div className="flex items-center justify-between border-b border-border pb-4">
           <h2 className="text-2xl font-bold font-heading text-foreground flex items-center gap-2">
             آخر الأخبار والتقارير
-          </h2>
-          <Link to="/news" className="text-sm font-medium text-primary hover:underline">
-            عرض كل الأخبار ←
-          </Link>
-        </div>
-
-        {newsLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-64 bg-card rounded-xl border border-border"></div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {latestNews?.map((item) => (
-              <Link to={`/news/${item.id}`} key={item.id} className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/40 transition-all flex flex-col">
-                {item.image && (
-                  <div className="aspect-video w-full overflow-hidden bg-muted">
-                    <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  </div>
-                )}
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-                  <h3 className="font-heading font-bold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                    {item.title}
-                  </h3>
-                  <span className="text-xs text-muted-foreground font-body">
-                    {new Date(item.created_at).toLocaleDateString('ar-YE')}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
-    </div>
-  );
-}
-
+            
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
